@@ -43,7 +43,7 @@ public class DataLogger {
             outputStream = new FileOutputStream(file,true);
             outputStream.write(content.getBytes());
 
-          //  Log.i("Log", content);
+
 
         } catch (IOException e) {
             e.printStackTrace();
