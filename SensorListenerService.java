@@ -106,8 +106,6 @@ public class SensorListenerService extends Service implements SensorEventListene
     @Override
     public void onCreate() {
 
-        boolean DoesUserAgree = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("DoesUserAgree", true);
-        if (DoesUserAgree==false){stopSelf();};
 
         buildGoogleApiClient();
         // The service is being created
@@ -119,8 +117,7 @@ public class SensorListenerService extends Service implements SensorEventListene
         wakeLock.acquire();
         Toast.makeText(this, "sensor service starting", Toast.LENGTH_SHORT).show();
 
-        /*googleApi*/
-        mGoogleApiClient.connect();
+
 
         /*sensor - read all sensors*/
 
@@ -149,10 +146,8 @@ public class SensorListenerService extends Service implements SensorEventListene
         mlocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         /*sound_level*/
-        soundlevel.Soundlevel_start();
-        Soundlevel_handler.postDelayed(Soundlevel_runable, 1000);
-
-
+      //  soundlevel.Soundlevel_start();
+      //  Soundlevel_handler.postDelayed(Soundlevel_runable, 1000);
         /*battery_level*/
         ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         batteryStatus = this.registerReceiver(null, ifilter);
@@ -161,28 +156,8 @@ public class SensorListenerService extends Service implements SensorEventListene
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-
-
-
-
-
-    /*    final Handler handler001 = new Handler();
-        final Runnable r001 = new Runnable() {
-
-            public void run() {
-                logswich=Integer.toString(ACCsamplingrate);
-               // Log.i("changeACC", "changeACC " + ACCsamplingrate + "logswich "+logswich);
-                changeACCsamplingrate(ACCsamplingrate);
-                ACCsamplingrate = ACCsamplingrate+20;
-                handler001.postDelayed(this, 1000*60*30);
-            }
-        };
-
-        handler001.postDelayed(r001, 1000*60);
-*/
-
-
+   /*googleApi*/
+        mGoogleApiClient.connect();
         return mStartMode;
     }
     @Override
@@ -202,7 +177,7 @@ public class SensorListenerService extends Service implements SensorEventListene
     }
     @Override
     public void onDestroy() {
-
+        super.onDestroy();
         Log.d("startuptest", "stop service ");
 
         Soundlevel_handler.removeCallbacks(Soundlevel_runable);
@@ -213,8 +188,7 @@ public class SensorListenerService extends Service implements SensorEventListene
         mGoogleApiClient.disconnect();
         wakeLock.release();
         Toast.makeText(this, "sensor service Stop", Toast.LENGTH_SHORT).show();
-        super.onDestroy();
-        // The service is no longer used and is being destroyed
+
     }
 
 
@@ -230,19 +204,19 @@ public class SensorListenerService extends Service implements SensorEventListene
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
-           // DataLogger.writeTolog( " A " + String.format("%.3f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z) + " "+Long.toString(event.timestamp)+"\n");
-            String dataformat= "A " + String.format("%.3f", x) + " " + String.format("%.3f", y) + " " + String.format("%.3f", z) + " "+ "\n";
+
+            String dataformat= "A " + String.format("%.3f", x) + " " + String.format("%.3f", y) + " " + String.format("%.3f", z) + " " + "\n";
             DataLogger.writeTolog( dataformat,logswich);
-            Log.i(Sensor_TAG, Long.toString(event.timestamp) + dataformat);
+            //Log.i(Sensor_TAG, Long.toString(event.timestamp) + dataformat);
         }
         else if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
-            // DataLogger.writeTolog( " A " + String.format("%.2f", x) + " " + String.format("%.2f", y) + " " + String.format("%.2f", z) + " "+Long.toString(event.timestamp)+"\n");
-            String dataformat= "G " + String.format("%.3f", x) + " " + String.format("%.3f", y) + " " + String.format("%.3f", z) + " "+ "\n";
+
+            String dataformat= "G " + String.format("%.3f", x) + " " + String.format("%.3f", y) + " " + String.format("%.3f", z) + " " + "\n";
             DataLogger.writeTolog( dataformat,logswich);
-            Log.i(Sensor_TAG, Long.toString(event.timestamp) + dataformat);
+         //   Log.i(Sensor_TAG, Long.toString(event.timestamp) + dataformat);
         }
         else if (mySensor.getType() == Sensor.TYPE_LIGHT) {
             float x = event.values[0];
